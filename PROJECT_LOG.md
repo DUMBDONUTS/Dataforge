@@ -75,3 +75,75 @@ Highlights discovered:
 - [ ] Write audience definition, prerequisites, learning objectives (README draft)
 - [ ] Extract exact equations from `bdh.py` (official repo) + from attention/linear-attention forms
 - [ ] Draft the guided narrative storyboard (guide mode → sandbox mode)
+
+---
+
+## Day 3 — Thu, Sep 3 2026: Claim pivot (locked) + single-page build
+
+### Pivot decision (locked after team review)
+- **Old claim (Day 0):** fixed-size state vs growing KV-cache memory.
+- **New claim (final):** *"A model can gain test-time compute by refining a fixed-size
+  recurrent latent state across iterations — trading verbal observability for cheaper
+  scaling — without writing any chain-of-thought tokens."*
+- **Why:** "Alternatives to Chain-of-Thought" is the approved topic with the strongest
+  BDH-CQ anchor (C12: no-CoT iterative latent reasoning, vendor-reported numbers) plus
+  independent literature (C15 Coconut: continuous thought beats CoT on planning-heavy
+  logic with better accuracy-efficiency tradeoff; C14 CoT origin: Wei et al. 2022).
+- **What reuses Day 0:** the fixed-recurrent-state mechanism, BDH synaptic-memory framing,
+  evidence-discipline labels, family-album context. Memory material becomes *supporting*
+  evidence (why latent passes are cheap: no growing cache), not the claim.
+- **Artifact scope:** single page, two panels (Side A scripted CoT trace vs Side B live
+  toy latent refiner + effort slider), truth-beside-estimate evidence panel, limitations box.
+- **Stack (StarkData Phase 0.5 locked):** static HTML/CSS/JS, no backend, GitHub Pages.
+
+### New verified sources (fetched directly, no guessing)
+- [C14] Wei et al. 2022, arXiv 2201.11903 — CoT prompting; 540B + 8 exemplars → GSM8K SOTA.
+- [C15] Hao et al. 2024, arXiv 2412.06769 (COLM 2025) — Coconut continuous thought;
+  latent BFS over alternatives; outperforms CoT on planning-heavy logic, better tradeoff.
+
+### Build completed (verified)
+- `index.html` + `styles.css` + `app.js` + `data/evidence.json` — opens with toy pre-run.
+- Side A: scripted CoT trace with live token counter (labeled illustration, not a live LLM).
+- Side B: seeded live toy (300 trials, effort slider 1–12, accuracy + error trajectory).
+- QA: JS syntax check passed; evidence JSON valid; file layout verified.
+
+### Next up
+- [ ] README + citations update (C14, C15) + license record + AI disclosure
+- [ ] GitHub Pages workflow + public URL smoke test
+- [ ] Blog draft (600–800 words) + one-page concept summary
+- [ ] Defense rehearsal: explain contraction factor, token math, evidence levels aloud
+
+---
+
+## Day 0 addendum — Reference study + 3D decision
+
+### Reference studied: Transformer Explainer (Georgia Tech, Polo Chau lab)
+Link: https://poloclub.github.io/transformer-explainer/ | Repo: https://github.com/poloclub/transformer-explainer (MIT, 8.5k stars, CHI 2026 paper)
+This is one of the three reference projects NAMED in the problem statement — so studying it = studying the judges' gold standard.
+
+**What it does:** whole GPT-2 (124M params) running live in-browser (ONNX Runtime, converted from Karpathy's nanoGPT), Svelte + D3.js, GitHub Pages. Opens pre-running with preset text; controls (temperature, top-k, top-p, attention hover) all touch real model internals.
+
+**Design takeaways we adopt (ours is same genre, different lesson):**
+1. Open with preset already running — page is alive before the learner touches anything
+2. Scrolling visual essay: text sections beside a live diagram that responds
+3. Every control maps to a real variable; numbers update live
+4. Static hosting on GitHub Pages, no backend
+5. Their scope is the WHOLE Transformer; we deliberately go narrow (one claim) — per problem statement's "one central claim" rule
+
+**Fun lineage:** their GPT-2 derives from nanoGPT; BDH's official code is also nanoGPT-based — same family tree our artifact teaches.
+
+### Decision locked: "2D-first page + 3D BDH finale"
+- ~95% of page: clean fast 2D (memory bars, mode toggle, recall quiz) — legible, mobile-safe, <1s
+- ONE hero 3D scene: BDH neuron constellation (Three.js via CDN, OrbitControls drag/zoom):
+  glowing nodes, pulses traveling along edges, synapses visibly thickening/brightening
+  when they co-fire (Hebbian learning made visible)
+- Rationale: BDH is literally a graph of locally-interacting neurons — 3D *is* the concept there,
+  not decoration. Problem statement rule "cut anything that doesn't serve the claim" respected:
+  memory bars stay 2D (2D shows O(n) vs O(1) more legibly than 3D).
+- Safety nets for rubric: 2D fallback diagram of the same BDH panel + "reduce motion" toggle
+  (mobile usability + accessibility points), precomputed where expensive, live where cheap
+- Defense note: the 3D scene is ~100–200 nodes + edges — simple scene graph, explainable
+
+### Stack addition (final)
+- 3D: Three.js (CDN import, no build step) — only inside the BDH panel
+- Everything else: plain HTML/CSS/JS + Python core for reference implementation & precomputed data

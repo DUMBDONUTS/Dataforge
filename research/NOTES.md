@@ -138,6 +138,7 @@ Primary source: pathway.com/research/introducing-bdh-cq (Aug 11, 2026).
 | 2 | Type/extend the input string; fixed-state model must echo it | State size (2–16 slots) | Recall accuracy decays with length / small state | The actual input string shown beside the echo | Truth-beside-estimate, falsifiability [C8] |
 | 3 | MQAR-lite: learn pairs ("apple → red"), then quiz | State size + number of distractor pairs | Recall %; plot state-size vs recall (Pareto curve) | Correct answer shown beside model's answer | Real variable → real consequence [C9] |
 | 4 | BDH panel: tiny neuron graph "reads" a repeated concept; synapse strengths heat up | Repetition / learning rate | Synapse weights visibly strengthen (Hebbian) | Highlight the exact BDH equation driving it (from bdh.py) | BDH integration (10), woven mid-journey [C7] |
+| 4b | **3D BDH constellation (hero scene):** rotating neuron graph; pulses travel along edges; co-firing synapses thicken/brighten in real time | Same as 4 (same computation, richer view) | Network visibly "learns" the repeated concept | Equation overlay + numeric synapse-strength readout beside the scene | Substrate wow-factor; 2D fallback + reduce-motion toggle for mobile/accessibility [C7] |
 | 5 | "Family album" strip | — (narrative) | — | RWKV/RetNet/Mamba/xLSTM/Jamba as 2–3-sentence cameos with mini-diagrams | Depth (25) breadth, one claim kept central |
 
 **Narrative arc (guide → sandbox):**

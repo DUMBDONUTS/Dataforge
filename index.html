@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Think Silently — Alternatives to Chain-of-Thought (Toy Explainer)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Think Silently, Not Out Loud</h1>
+  <p class="claim"><b>Claim:</b> a model can buy test-time compute by refining a fixed-size
+  recurrent latent state across iterations — trading verbal observability for cheaper
+  scaling — <b>without writing any chain-of-thought tokens.</b></p>
+  <p class="sub">Same puzzle, two minds. Watch the cost of thinking — then slide the silent effort.</p>
+</header>
+
+<main>
+  <section class="panels">
+    <div class="panel" id="cot-panel">
+      <h2>Side A — Thinks out loud <span class="tag">LLM + CoT</span></h2>
+      <p class="task">Puzzle: a crate holds 4 boxes × 6 apples. You sell 10. How many left?</p>
+      <button id="cot-run">Run thinking-out-loud</button>
+      <ol id="cot-steps"></ol>
+      <p>Reasoning tokens: <span class="badge" id="cot-tokens">–</span>
+         Answer: <span class="badge" id="cot-answer">–</span></p>
+      <p class="honest">Illustrative CoT trace, <b>scripted for teaching</b> — not a live LLM.
+      Token counts are counted from the displayed words.</p>
+    </div>
+
+    <div class="panel" id="latent-panel">
+      <h2>Side B — Thinks silently <span class="tag alt">recurrent latent state</span></h2>
+      <p class="task">Same puzzle family (synthetic compositional trials). No words are written.</p>
+      <label><b>Silent effort (passes): <span id="effval">3</span></b></label>
+      <input id="effort" type="range" min="1" max="12" value="3">
+      <button id="latent-run">Run silent trials</button>
+      <p>Toy accuracy: <span class="badge" id="lat-acc">–</span>
+         Reasoning tokens: <span class="badge" id="lat-tok">0</span></p>
+      <canvas id="plot" width="640" height="220"></canvas>
+      <p id="traj" class="mono"></p>
+      <p class="honest"><b>Live toy system</b> (real computation in your browser): a fixed-size
+      state refined per pass. Labeled toy — not an official BDH/BDH-CQ model.</p>
+    </div>
+  </section>
+
+  <section class="panel wide">
+    <h2>Truth beside estimate — published evidence (precomputed)</h2>
+    <div id="evidence">loading…</div>
+  </section>
+
+  <section class="panel wide warn">
+    <h2>Honest limitations</h2>
+    <ul>
+      <li>Toy task is <b>synthetic</b>; real reasoning is harder and less well-behaved.</li>
+      <li>Silent passes are <b>unobservable</b> — accuracy is the only signal. That is the trade, not a footnote.</li>
+      <li>BDH-CQ figures are <b>vendor-reported</b> (Pathway page), not independent reproduction.</li>
+      <li>CoT trace is scripted illustration; token counts are illustrative, not a measured LLM run.</li>
+    </ul>
+  </section>
+
+  <section class="panel wide">
+    <h2>Explain it back (60-second test)</h2>
+    <p>After playing: why does accuracy rise on Side B while its token counter stays at 0?
+    When would you still choose Side A?</p>
+  </section>
+</main>
+
+<footer>
+  <p>DataForge 2026 Pathway Track · Solo · Sources: Wei et al. 2022 (arXiv 2201.11903);
+  Hao et al. 2024 (arXiv 2412.06769); Pathway BDH-CQ report (Aug 2026). AI-assisted, fully understood.</p>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>
