@@ -82,6 +82,16 @@ https://www.pathway.com/research/beyond-transformers-sudoku-bench
 Claims: 97.4% top-1 on ~250,000 Sudoku Extreme puzzles without chain-of-thought or backtracking; leading reasoning LLMs ~0% (their cited comparison, arXiv 2506.21734).
 Evidence level: [VENDOR] — with explicit caveat: result comes from Pathway's internal BDH implementation, NOT the open-source repo (stated in repo README). BABILong claim (95% @ 32K, 134M model) additionally marked by Pathway as "pending final contamination checks, independent validation, and leaderboard review" — carry that label if used.
 
+**[C14] Chain-of-Thought Prompting Elicits Reasoning in Large Language Models** — Wei et al., 2022.
+https://arxiv.org/abs/2201.11903
+Claims: prompting with written intermediate reasoning steps improves complex arithmetic, commonsense and symbolic reasoning; a 540B model with eight CoT exemplars reached state of the art on GSM8K at publication.
+Evidence level: [PEER] (NeurIPS 2022). Basis of the explainer's definition of written chain-of-thought.
+
+**[C15] Training Large Language Models to Reason in a Continuous Latent Space** — Hao et al., 2024 (COLM 2025).
+https://arxiv.org/abs/2412.06769
+Claims: Coconut feeds the final hidden state back as the next input embedding rather than decoding it into words; continuous thoughts can retain multiple planning alternatives; paper reports a better accuracy-efficiency tradeoff than CoT on planning-heavy logical reasoning.
+Evidence level: [PEER] (COLM 2025). Independent context for latent reasoning; it is not BDH-CQ.
+
 ## Background sources (outside 2022–2026 window; not counted toward the ≥3)
 
 **[B1] Attention Is All You Need** — Vaswani et al., NeurIPS 2017.
@@ -108,6 +118,8 @@ Learning aid; not cited for technical claims.
 | BDH: working memory = Hebbian synaptic plasticity; sparse positive activations; monosemanticity | [C7] |
 | BDH-CQ: 29.5% ARC-AGI-1 @ $0.0007/task; latent reasoning, no CoT | [C12] (vendor, independently black-box evaluated per report) |
 | BDH Sudoku 97.4% (internal impl., not OSS repo) | [C13] (vendor + repo README caveat) |
+| CoT is written intermediate reasoning and improves complex reasoning at scale | [C14] |
+| Latent/continuous reasoning can avoid decoding intermediate states into words | [C15] |
 
 ## License & provenance to-do (before submission)
 - [ ] Confirm licenses of any code we adapt (bdh.py = MIT; RWKV repo; NX-AI xlstm; state-spaces/mamba; based)

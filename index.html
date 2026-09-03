@@ -1,74 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Think Silently — Alternatives to Chain-of-Thought (Toy Explainer)</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive explainer: Alternatives to Chain-of-Thought reasoning with BDH-CQ">
+  <title>Think Silently — CoT vs BDH-CQ Interactive Explainer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
-  <h1>Think Silently, Not Out Loud</h1>
-  <p class="claim"><b>Claim:</b> a model can buy test-time compute by refining a fixed-size
-  recurrent latent state across iterations — trading verbal observability for cheaper
-  scaling — <b>without writing any chain-of-thought tokens.</b></p>
-  <p class="sub">Same puzzle, two minds. Watch the cost of thinking — then slide the silent effort.</p>
-</header>
+  <a class="skip-link" href="#lab">Skip to interactive lab</a>
 
-<main>
-  <section class="panels">
-    <div class="panel" id="cot-panel">
-      <h2>Side A — Thinks out loud <span class="tag">LLM + CoT</span></h2>
-      <p class="task">Puzzle: a crate holds 4 boxes × 6 apples. You sell 10. How many left?</p>
-      <button id="cot-run">Run thinking-out-loud</button>
-      <ol id="cot-steps"></ol>
-      <p>Reasoning tokens: <span class="badge" id="cot-tokens">–</span>
-         Answer: <span class="badge" id="cot-answer">–</span></p>
-      <p class="honest">Illustrative CoT trace, <b>scripted for teaching</b> — not a live LLM.
-      Token counts are counted from the displayed words.</p>
+  <header class="hero">
+    <nav class="top-nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Think Silently home">think<span>silently</span></a>
+      <div class="nav-links">
+        <a href="#lab">Lab</a>
+        <a href="#mechanism">Mechanism</a>
+        <a href="#bdh-cq">BDH-CQ</a>
+        <a href="#evidence">Evidence</a>
+      </div>
+    </nav>
+    <div class="hero-grid" id="top">
+      <div>
+        <p class="eyebrow">DataForge 2026 · Pathway Track</p>
+        <h1>What if an AI could <em>reason</em> without writing every step?</h1>
+        <p class="hero-copy">Chain-of-thought forces a model to narrate its reasoning as tokens. BDH-CQ takes a different path: iterative computation in a recurrent latent state, decoding only candidate answers. This lab lets you test both on the same problem.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#lab">Open the reasoning lab</a>
+          <a class="button button-quiet" href="#mechanism">Understand the mechanism first</a>
+        </div>
+      </div>
+      <aside class="claim-card">
+        <p class="card-label">THE FALSIFIABLE CLAIM</p>
+        <p>"A model can gain test-time compute by refining a fixed-size recurrent latent state across iterations — trading verbal observability for cheaper scaling — without writing any chain-of-thought tokens."</p>
+        <div class="claim-checks">
+          <span><b id="hero-passes">4</b> silent passes</span>
+          <span><b id="hero-tokens">0</b> CoT tokens</span>
+        </div>
+        <p class="microcopy">Test it below. Reduce capacity → latent fails. Inject CoT error → trace breaks. This is a teaching simulation, not the real BDH-CQ model.</p>
+      </aside>
     </div>
+  </header>
 
-    <div class="panel" id="latent-panel">
-      <h2>Side B — Thinks silently <span class="tag alt">recurrent latent state</span></h2>
-      <p class="task">Same puzzle family (synthetic compositional trials). No words are written.</p>
-      <label><b>Silent effort (passes): <span id="effval">3</span></b></label>
-      <input id="effort" type="range" min="1" max="12" value="3">
-      <button id="latent-run">Run silent trials</button>
-      <p>Toy accuracy: <span class="badge" id="lat-acc">–</span>
-         Reasoning tokens: <span class="badge" id="lat-tok">0</span></p>
-      <canvas id="plot" width="640" height="220"></canvas>
-      <p id="traj" class="mono"></p>
-      <p class="honest"><b>Live toy system</b> (real computation in your browser): a fixed-size
-      state refined per pass. Labeled toy — not an official BDH/BDH-CQ model.</p>
-    </div>
-  </section>
+  <main>
+    <section class="section intro-section" aria-labelledby="question-title">
+      <p class="eyebrow">THE QUESTION</p>
+      <h2 id="question-title">Writing thoughts helps. It also creates a bottleneck.</h2>
+      <div class="three-up">
+        <article>
+          <span class="number">01</span>
+          <h3>Chain-of-thought</h3>
+          <p>The model writes: "First do this. Then do that." Those tokens become its visible scratchpad.</p>
+        </article>
+        <article>
+          <span class="number">02</span>
+          <h3>Latent reasoning (BDH-CQ)</h3>
+          <p>The model updates an internal state repeatedly and only decodes candidate answers.</p>
+        </article>
+        <article>
+          <span class="number">03</span>
+          <h3>The trade</h3>
+          <p>Silent work avoids the token bottleneck, but people cannot inspect intermediate steps.</p>
+        </article>
+      </div>
+    </section>
 
-  <section class="panel wide">
-    <h2>Truth beside estimate — published evidence (precomputed)</h2>
-    <div id="evidence">loading…</div>
-  </section>
+    <section class="section lab-section" id="lab" aria-labelledby="lab-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LIVE INTERACTIVE SUBSTRATE</p>
+          <h2 id="lab-title">Reasoning Lab</h2>
+          <p>Pick a task or write your own. Watch both systems reason on the exact same input.</p>
+        </div>
+        <div class="live-pill"><span></span> Runs locally in your browser · No API keys · No backend</div>
+      </div>
 
-  <section class="panel wide warn">
-    <h2>Honest limitations</h2>
-    <ul>
-      <li>Toy task is <b>synthetic</b>; real reasoning is harder and less well-behaved.</li>
-      <li>Silent passes are <b>unobservable</b> — accuracy is the only signal. That is the trade, not a footnote.</li>
-      <li>BDH-CQ figures are <b>vendor-reported</b> (Pathway page), not independent reproduction.</li>
-      <li>CoT trace is scripted illustration; token counts are illustrative, not a measured LLM run.</li>
-    </ul>
-  </section>
+      <div class="problem-selector">
+        <div class="preset-row" aria-label="Problem presets" role="tablist">
+          <button class="preset active" role="tab" data-preset="arc" aria-selected="true">ARC Visual</button>
+          <button class="preset" role="tab" data-preset="arithmetic" aria-selected="false">Arithmetic</button>
+          <button class="preset" role="tab" data-preset="logic" aria-selected="false">Logic Puzzle</button>
+          <button class="preset" role="tab" data-preset="custom" aria-selected="false">Custom</button>
+        </div>
 
-  <section class="panel wide">
-    <h2>Explain it back (60-second test)</h2>
-    <p>After playing: why does accuracy rise on Side B while its token counter stays at 0?
-    When would you still choose Side A?</p>
-  </section>
-</main>
+        <div class="problem-editor">
+          <label for="problem-input">Your reasoning task</label>
+          <div class="editor-row">
+            <textarea id="problem-input" rows="4" spellcheck="true" placeholder="Describe a reasoning task..."></textarea>
+            <div class="editor-sidebar">
+              <p id="parser-status" class="parser-status" aria-live="polite">Select a preset or enter a task.</p>
+              <button id="analyze-button" class="button button-primary">Analyze</button>
+            </div>
+          </div>
+          <details class="supported-patterns">
+            <summary>What tasks are supported?</summary>
+            <ul>
+              <li><b>ARC Visual:</b> Grid transformation rules (simulated)</li>
+              <li><b>Arithmetic:</b> Multi-step word problems with numbers</li>
+              <li><b>Logic:</b> Deductive puzzles with constraints</li>
+              <li>Unsupported input is rejected honestly — no fake comprehension.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
 
-<footer>
-  <p>DataForge 2026 Pathway Track · Solo · Sources: Wei et al. 2022 (arXiv 2201.11903);
-  Hao et al. 2024 (arXiv 2412.06769); Pathway BDH-CQ report (Aug 2026). AI-assisted, fully understood.</p>
-</footer>
-<script src="app.js"></script>
+      <div class="comparison-grid">
+        <article class="reasoning-panel cot-panel" aria-labelledby="cot-title">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">SIDE A</p>
+              <h3 id="cot-title">Chain-of-Thought Reasoning</h3>
+            </div>
+            <span class="mode-tag cot-tag">CO-T</span>
+          </div>
+          <p class="panel-description">The model generates intermediate reasoning tokens as its scratchpad. Every step is visible, auditable, and costs tokens.</p>
+          <div class="metrics-grid" aria-label="Chain-of-thought metrics">
+            <div><span>Reasoning steps</span><b id="cot-step-count">0</b></div>
+            <div><span>Tokens used</span><b id="cot-token-count">0</b></div>
+            <div><span>Final answer</span><b id="cot-answer">--</b></div>
+          </div>
+          <div class="trace-wrap">
+            <div class="trace-title"><span class="trace-dot"></span> Written Reasoning Trace</div>
+            <ol id="cot-trace" class="cot-trace" aria-live="polite"></ol>
+          </div>
+          <div class="fault-injection">
+            <label class="toggle-label" for="inject-error">
+              <input id="inject-error" type="checkbox">
+              <span class="toggle-ui" aria-hidden="true"></span>
+              Inject a deliberate reasoning error
+            </label>
+            <p id="cot-fault-note">Enable to see how a single wrong token propagates.</p>
+          </div>
+          <p class="boundary"><b>Honesty label:</b> Deterministic simulation for teaching. Not a live LLM. Token counts are transparent word counts.</p>
+        </article>
+
+        <article class="reasoning-panel latent-panel" aria-labelledby="latent-title">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">SIDE B</p>
+              <h3 id="latent-title">BDH-CQ Style Latent Reasoning</h3>
+            </div>
+            <span class="mode-tag latent-tag">BDH-CQ</span>
+          </div>
+          <p class="panel-description">The model performs iterative computation in a fixed-size recurrent latent state. Only candidate answers are decoded — no reasoning tokens emitted.</p>
+          <div class="metrics-grid" aria-label="Latent reasoning metrics">
+            <div><span>Silent passes</span><b id="latent-pass-count">4</b></div>
+            <div><span>CoT tokens</span><b id="latent-token-count">0</b></div>
+            <div><span>Decoded answer</span><b id="latent-answer">--</b></div>
+          </div>
+          <div class="control-block">
+            <div class="control-title"><label for="effort-slider">Thinking effort (passes)</label><output id="effort-output" for="effort-slider">4 passes</output></div>
+            <input id="effort-slider" type="range" min="1" max="8" value="4">
+            <div class="range-labels"><span>low effort</span><span>high effort</span></div>
+          </div>
+          <div class="control-block">
+            <div class="control-title"><label for="capacity-slider">State capacity (slots)</label><output id="capacity-output" for="capacity-slider">4 slots</output></div>
+            <input id="capacity-slider" type="range" min="1" max="8" value="4">
+            <div class="range-labels"><span>tiny</span><span>large</span></div>
+          </div>
+          <div class="latent-view">
+            <div class="trace-title"><span class="trace-dot latent-dot"></span> Latent State Visualization</div>
+            <div id="state-cells" class="state-cells" aria-label="Latent state slots" role="list"></div>
+            <div class="progress-row"><span>Distance to answer</span><div class="progress-track"><div id="error-progress" class="progress-fill"></div></div><b id="error-value">--</b></div>
+            <ol id="state-events" class="state-events" aria-live="polite" aria-label="State update log"></ol>
+          </div>
+          <button id="step-button" class="button button-quiet full-width">Advance one silent pass</button>
+          <p id="latent-note" class="latent-note" aria-live="polite">Adjust controls, then click to advance passes.</p>
+          <p class="boundary"><b>Honesty label:</b> Teaching simulation based on BDH-CQ published mechanism. Not the real BDH-CQ model. Real latent states are high-dimensional and not directly interpretable.</p>
+        </article>
+      </div>
+
+      <div class="verdict-strip" id="verdict-strip" aria-live="polite" role="status">
+        <div><span class="verdict-label">GROUND TRUTH</span><b id="truth-answer">--</b></div>
+        <div><span class="verdict-label">CO-T RESULT</span><b id="verdict-cot">--</b></div>
+        <div><span class="verdict-label">LATENT RESULT</span><b id="verdict-latent">--</b></div>
+        <p id="verdict-message">Select a problem and click Analyze to begin.</p>
+      </div>
+
+      <div class="falsifiability-lab">
+        <h3>Falsifiability Lab</h3>
+        <p>The claim must be testable. Try these challenges:</p>
+        <div class="falsify-grid">
+          <button class="falsify-btn" data-test="capacity">Reduce capacity → latent fails</button>
+          <button class="falsify-btn" data-test="effort">Reduce effort → latent incomplete</button>
+          <button class="falsify-btn" data-test="cot-error">Inject CoT error → trace breaks</button>
+          <button class="falsify-btn" data-test="unsupported">Unsupported task → both reject</button>
+        </div>
+        <p id="falsify-feedback" class="falsify-feedback" aria-live="polite">Click a challenge to test the claim.</p>
+      </div>
+    </section>
+
+    <section class="section mechanism-section" id="mechanism" aria-labelledby="mechanism-title">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">THE MECHANISM</p>
+          <h2 id="mechanism-title">Where does the reasoning happen?</h2>
+        </div>
+      </div>
+      <div class="mechanism-grid">
+        <div class="flow-card">
+          <p class="flow-label">CHAIN-OF-THOUGHT</p>
+          <div class="flow-line"><span>problem</span><i>→</i><span>tokens</span><i>→</i><span>more tokens</span><i>→</i><span>answer</span></div>
+          <p>Each reasoning step becomes new text the model reads on the next step. Inspectable, but serial and token-costly.</p>
+        </div>
+        <div class="flow-card dark-flow">
+          <p class="flow-label">BDH-CQ LATENT REASONING</p>
+          <div class="flow-line"><span>problem</span><i>→</i><span class="state-node">state ↻ state ↻ state</span><i>→</i><span>answer</span></div>
+          <p>Iterative refinement in a fixed-size recurrent state. Only candidate answers decoded. Cheaper compute, zero CoT tokens.</p>
+        </div>
+      </div>
+      <div class="mechanism-notes">
+        <article><h3>Why it can be cheaper</h3><p>CoT adds generated tokens per step. Recurrent systems allocate extra work as internal passes without growing a written trace.</p></article>
+        <article><h3>Why it is harder to trust</h3><p>You cannot read a latent vector as a sentence. Evaluation and verification must replace inspection of written rationale.</p></article>
+        <article><h3>What this does not claim</h3><p>Latent reasoning is not automatically more accurate, universally cheaper, or a replacement for auditable reasoning. Results depend on architecture and task.</p></article>
+      </div>
+    </section>
+
+    <section class="section bdh-section" id="bdh-cq" aria-labelledby="bdh-title">
+      <div class="bdh-layout">
+        <div>
+          <p class="eyebrow">CASE STUDY · PATHWAY BDH-CQ</p>
+          <h2 id="bdh-title">BDH-CQ puts latent reasoning into a reported system.</h2>
+          <p>Pathway describes BDH-CQ as a 150M-parameter system that learns from demonstrations by updating recurrent latent state at inference. It decodes candidate answers rather than chain-of-thought, with no per-task parameter updates.</p>
+          <p class="vendor-label">Evidence status: Vendor technical report (Pathway, Aug 2026). This app does not reproduce BDH-CQ.</p>
+        </div>
+        <div class="bdh-diagram" aria-label="Simplified BDH-CQ process diagram">
+          <div class="diagram-node input-node">Examples + Task</div>
+          <div class="diagram-arrow">↓</div>
+          <div class="diagram-node state-diagram-node">Recurrent Latent State<br><small>read · update · refine</small></div>
+          <div class="loop-arrow">↻ more effort = more updates</div>
+          <div class="diagram-arrow">↓</div>
+          <div class="diagram-node output-node">Candidate Answer(s)<br><small>not a written rationale</small></div>
+        </div>
+      </div>
+      <div class="evidence-grid" id="evidence-cards" aria-live="polite" role="list"></div>
+    </section>
+
+    <section class="section source-section" id="evidence" aria-labelledby="source-title">
+      <p class="eyebrow">EVIDENCE DISCIPLINE</p>
+      <h2 id="source-title">What is established, reported, and still open?</h2>
+      <div class="source-table-wrap">
+        <table>
+          <thead><tr><th>Statement</th><th>Evidence Level</th><th>Source</th><th>How This Page Uses It</th></tr></thead>
+          <tbody id="evidence-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section checkpoint-section" aria-labelledby="checkpoint-title">
+      <p class="eyebrow">60-SECOND CHECKPOINT</p>
+      <h2 id="checkpoint-title">Can you now state the trade-off?</h2>
+      <div class="checkpoint-card">
+        <p><b>After reducing state capacity in the lab, what happened?</b></p>
+        <div class="choice-list" id="checkpoint-options" role="radiogroup" aria-label="Checkpoint answers">
+          <button role="radio" data-answer="wrong">The toy became smarter because smaller states are faster.</button>
+          <button role="radio" data-answer="right">A required fact could not fit, so the toy could not decode an answer.</button>
+          <button role="radio" data-answer="wrong">The model wrote fewer words but still showed every reasoning step.</button>
+        </div>
+        <p id="checkpoint-feedback" class="checkpoint-feedback" aria-live="polite">Choose an answer based on what you just tested.</p>
+        <p class="checkpoint-prompt">Now explain aloud: <i>"Latent reasoning trades observability for compute efficiency. I lose the ability to inspect the reasoning in plain language."</i></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><b>Think Silently</b> · DataForge 2026 Pathway Track · Interactive educational artifact</p>
+    <p>Sources: <a href="https://arxiv.org/abs/2201.11903">Wei et al., 2022 (CoT)</a> · <a href="https://arxiv.org/abs/2412.06769">Hao et al., 2024 (Coconut)</a> · <a href="https://www.pathway.com/research/introducing-bdh-cq">Pathway BDH-CQ Report, 2026</a> · <a href="https://arxiv.org/abs/2509.26507">Kosowski et al., 2025 (BDH)</a>. AI-assisted development disclosed in README.</p>
+  </footer>
+  <script src="app.js"></script>
 </body>
 </html>
